@@ -1,12 +1,10 @@
-use std::intrinsics::sqrtf64;
-
 enum TemperatureType {
     F,
     C,
     K,
 }
 
-struct Parameters {
+pub(crate) struct Parameters {
     // Temperature in Kelvin degrees
     temperature: f64,
     pressure: f64,
@@ -34,14 +32,14 @@ impl Parameters {
 }
 
 fn fahrenheit_to_celsius(degrees: &f64) -> f64 {
-    return (degrees + 40.0) * 5.0 / 9.0 - 40;
+    return (degrees + 40.) * 5. / 9. - 40.;
 }
 
 fn normalize_temperature(temperature: &f64, temperature_type: TemperatureType) -> f64 {
     return match temperature_type {
-        TemperatureType::F => fahrenheit_to_celsius(&temperature),
-        TemperatureType::C => &temperature + 273.15,
-        _ => &temperature,
+        TemperatureType::F => fahrenheit_to_celsius(temperature),
+        TemperatureType::C => *temperature + 273.15,
+        TemperatureType::K => *temperature,
     };
 }
 
