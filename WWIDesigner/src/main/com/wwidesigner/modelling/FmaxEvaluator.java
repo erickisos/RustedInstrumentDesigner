@@ -74,7 +74,7 @@ public class FmaxEvaluator implements EvaluatorInterface
 					centDeviation = Note.cents(actual.getNote().getFrequencyMax(),
 							predicted.getFrequencyMax());
 				}
-				catch (RuntimeException e)
+				catch (RuntimeException ignored)
 				{
 				}
 			}

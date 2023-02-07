@@ -19,6 +19,7 @@
 package com.wwidesigner.optimization;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -184,7 +185,7 @@ public abstract class BaseObjectiveFunction
 	 *            - geometry values to test. point.length == nrDimensions.
 	 * @return array of error values, one for each fingering target.
 	 * @throws OperationCancelledException
-	 * @throws DimensionMismatchException.
+	 * @throws DimensionMismatchException
 	 */
 	public double[] getErrorVector(double[] point)
 	{
@@ -198,8 +199,7 @@ public abstract class BaseObjectiveFunction
 			throw new DimensionMismatchException(point.length, nrDimensions);
 		}
 		setGeometryPoint(point);
-		double[] errorVector = evaluator.calculateErrorVector(fingeringTargets);
-		return errorVector;
+		return evaluator.calculateErrorVector(fingeringTargets);
 	}
 
 	/**
@@ -209,20 +209,11 @@ public abstract class BaseObjectiveFunction
 	 * @param errorVector
 	 * @return sum of squared errors
 	 */
-	public double calcNorm(double[] errorVector)
-	{
-		double norm = 0.0;
-		for (int i = 0; i < errorVector.length; i++)
-		{
-			double err = errorVector[i];
-			int weight = fingeringTargets.get(i).getOptimizationWeight();
-			if (weight > 0)
-			{
-				norm += err * err * weight;
-			}
-		}
-
-		return norm;
+	public double calcNorm(double[] errorVector) {
+		return IntStream.range(0, errorVector.length)
+				.filter(i -> fingeringTargets.get(i).getOptimizationWeight() > 0)
+				.mapToDouble(i -> errorVector[i] * errorVector[i] * fingeringTargets.get(i).getOptimizationWeight())
+				.sum();
 	}
 
 	public boolean isRunTwoStageOptimization()
@@ -273,14 +264,7 @@ public abstract class BaseObjectiveFunction
 			{
 				normalized[i] = lowerBounds[i];
 			}
-			else if (unnormalized[i] >= upperBounds[i])
-			{
-				normalized[i] = upperBounds[i];
-			}
-			else
-			{
-				normalized[i] = unnormalized[i];
-			}
+			else normalized[i] = Math.min(unnormalized[i], upperBounds[i]);
 		}
 		return normalized;
 	}
@@ -338,7 +322,7 @@ public abstract class BaseObjectiveFunction
 	{
 		if (initialTrustRegionRadius == null)
 		{
-			double initial[] = getInitialPoint();
+			double[] initial = getInitialPoint();
 			getInitialTrustRegionRadius(initial);
 		}
 
@@ -378,15 +362,7 @@ public abstract class BaseObjectiveFunction
 				maxExpectedChange = boundDifference;
 			}
 		}
-		if (minRadius > 0.1 * maxExpectedChange)
-		{
-			initialTrustRegionRadius = minRadius;
-		}
-		else
-		{
-			initialTrustRegionRadius = 0.1 * maxExpectedChange;
-		}
-
+		initialTrustRegionRadius = Math.max(minRadius, 0.1 * maxExpectedChange);
 		return initialTrustRegionRadius;
 	}
 
@@ -397,7 +373,7 @@ public abstract class BaseObjectiveFunction
 	public double[] getSimplexStepSize()
 	{
 		double[] stepSize = new double[nrDimensions];
-		double initial[] = getInitialPoint();
+		double[] initial = getInitialPoint();
 
 		for (int i = 0; i < nrDimensions; ++i)
 		{
@@ -522,10 +498,6 @@ public abstract class BaseObjectiveFunction
 
 	public OptimizerType getOptimizerType()
 	{
-		// if (isMultiStart())
-		// {
-		// return OptimizerType.MultiStartOptimizer;
-		// }
 		return optimizerType;
 	}
 
@@ -546,11 +518,7 @@ public abstract class BaseObjectiveFunction
 
 	public boolean isMultiStart()
 	{
-		if (rangeProcessor != null)
-		{
-			return true;
-		}
-		return false;
+		return rangeProcessor != null;
 	}
 
 	public AbstractRangeProcessor getRangeProcessor()
@@ -628,13 +596,8 @@ public abstract class BaseObjectiveFunction
 	 */
 	public boolean isOptimizerMatch(OptimizerType anOptimizerType)
 	{
-		if (isMultiStart()
-				&& anOptimizerType.equals(OptimizerType.DIRECTOptimizer))
-		{
-			return false;
-		}
-
-		return true;
+		return !isMultiStart()
+				|| !anOptimizerType.equals(OptimizerType.DIRECTOptimizer);
 	}
 
 }

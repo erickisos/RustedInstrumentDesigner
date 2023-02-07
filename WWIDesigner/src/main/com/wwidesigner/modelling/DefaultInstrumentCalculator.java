@@ -81,11 +81,7 @@ public class DefaultInstrumentCalculator extends InstrumentCalculator
 		// and multiply by transfer matrices of each hole and bore segment
 		// from the termination up to and including the mouthpiece.
 
-		boolean isOpenEnd = true;
-		if (fingering.getOpenEnd() != null && ! fingering.getOpenEnd())
-		{
-			isOpenEnd = false;
-		}
+		boolean isOpenEnd = fingering.getOpenEnd() == null || fingering.getOpenEnd();
 		StateVector sv = terminationCalculator.calcStateVector(instrument.getTermination(),
 				isOpenEnd, waveNumber, params);
 		TransferMatrix tm;
@@ -119,9 +115,8 @@ public class DefaultInstrumentCalculator extends InstrumentCalculator
 		StateVector sv = calcInputStateVector(frequency, fingering);
 		
 		double headRadius = instrument.getMouthpiece().getBoreDiameter() / 2.;
-		
-		Complex reflectance = sv.getReflectance( params.calcZ0(headRadius) );
-		return reflectance;
+
+		return sv.getReflectance( params.calcZ0(headRadius) );
 	}
 
 	/*
@@ -149,8 +144,7 @@ public class DefaultInstrumentCalculator extends InstrumentCalculator
 		{
 			return 1.0;
 		}
-		double gain = (G0 * freq * params.getRho()) / Z.abs();
-		return gain;
+		return (G0 * freq * params.getRho()) / Z.abs();
 	}
 
 	@Override

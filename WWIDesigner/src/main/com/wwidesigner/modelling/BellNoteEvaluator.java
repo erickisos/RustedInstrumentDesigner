@@ -24,14 +24,7 @@ public class BellNoteEvaluator implements EvaluatorInterface
 	
 	protected static boolean allHolesClosed(Fingering fingering)
 	{
-		for (boolean isOpen: fingering.getOpenHole() )
-		{
-			if (isOpen)
-			{
-				return false;
-			}
-		}
-		return true;
+		return !fingering.getOpenHole().contains(true);
 	}
 
 	/**
@@ -43,23 +36,15 @@ public class BellNoteEvaluator implements EvaluatorInterface
 
 	public double[] calculateErrorVector(List<Fingering> fingeringTargets)
 	{
-		double[] errorVector = new double[fingeringTargets.size()];
+		return fingeringTargets.stream()
+				.mapToDouble(target -> {
+					try {
+						return allHolesClosed(target) ? calculator.calcZ(FmaxRatio * target.getNote().getFrequency(), target).getImaginary() : 0.0;
+					} catch (Exception e) {
+						return 0.0;
+					}
+				})
+				.toArray();
 
-		int i = 0;
-		for (Fingering target: fingeringTargets)
-		{
-			if ( ! allHolesClosed( target )
-				|| target.getNote() == null 
-				|| target.getNote().getFrequency() == null )
-			{
-				errorVector[i++] = 0.0;
-			}
-			else
-			{
-				double fmax = FmaxRatio * target.getNote().getFrequency();
-				errorVector[i++] = calculator.calcZ(fmax, target).getImaginary();
-			}
-		}
-		return errorVector;
 	}
 }
