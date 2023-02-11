@@ -1,4 +1,5 @@
 pub mod parameters;
+pub mod temperature;
 
 pub const UNIVERSAL_GAS_CONSTANT: f64 = 8.314472; // J/mol K.
 pub const MOLAR_MASS_WATER_VAPOUR: f64 = 18.01527; // kg/kMol
