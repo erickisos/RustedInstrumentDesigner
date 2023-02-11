@@ -1,34 +1,5 @@
 use super::temperature::{normalize_temperature, TemperatureType};
 
-fn calculate_vapour_pressure(temperature: f64) -> f64 {
-    return 0.001
-        * (1.2378847e-5 * temperature.powi(2) - 1.9121316e-2 * temperature + 33.93711047
-            - (6.3431645e3 / temperature))
-            .exp();
-}
-
-fn calculate_enhancement_factor(pressure: f64, temperature: f64) -> f64 {
-    return 1.00062 + 3.14e-5 * pressure + 5.6e-7 * temperature.powi(2);
-}
-
-fn calculate_molar_water_vapour(humidity_saturation: f64, pressure: f64, temperature: f64) -> f64 {
-    // Enhancement factor, from CIPM 2007.
-    let enhancement_factor = calculate_enhancement_factor(pressure, temperature);
-    // Saturated vapour pressure in kPa from CIPM-2007
-    let saturated_vapour_pressure = calculate_vapour_pressure(temperature);
-    return 0.01
-        * humidity_saturation
-        * enhancement_factor
-        * (saturated_vapour_pressure / pressure);
-}
-
-fn calculate_air_density(pressure: f64, temperature: f64, molar_water_vapour: f64) -> f64 {
-    // TODO: Check this function
-    let humid_air_constant = 0.;
-    let compressibility = 0.;
-    return pressure * 1e3 / (compressibility * humid_air_constant * temperature);
-}
-
 struct BasicParameters {
     temperature: Option<f64>,                  // Temperature
     temperature_type: Option<TemperatureType>, // Temperature type
@@ -83,4 +54,33 @@ impl CalculatedParameters {
             sound_speed: todo!(),
         };
     }
+}
+
+fn calculate_vapour_pressure(temperature: f64) -> f64 {
+    return 0.001
+        * (1.2378847e-5 * temperature.powi(2) - 1.9121316e-2 * temperature + 33.93711047
+            - (6.3431645e3 / temperature))
+            .exp();
+}
+
+fn calculate_enhancement_factor(pressure: f64, temperature: f64) -> f64 {
+    return 1.00062 + 3.14e-5 * pressure + 5.6e-7 * temperature.powi(2);
+}
+
+fn calculate_molar_water_vapour(humidity_saturation: f64, pressure: f64, temperature: f64) -> f64 {
+    // Enhancement factor, from CIPM 2007.
+    let enhancement_factor = calculate_enhancement_factor(pressure, temperature);
+    // Saturated vapour pressure in kPa from CIPM-2007
+    let saturated_vapour_pressure = calculate_vapour_pressure(temperature);
+    return 0.01
+        * humidity_saturation
+        * enhancement_factor
+        * (saturated_vapour_pressure / pressure);
+}
+
+fn calculate_air_density(pressure: f64, temperature: f64, molar_water_vapour: f64) -> f64 {
+    // TODO: Check this function
+    let humid_air_constant = 0.;
+    let compressibility = 0.;
+    return pressure * 1e3 / (compressibility * humid_air_constant * temperature);
 }
