@@ -553,7 +553,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rusted_designer"
+name = "rusted_instrument_designer"
 version = "0.1.0"
 dependencies = [
  "gtk4",
