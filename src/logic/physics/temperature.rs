@@ -20,3 +20,6 @@ pub(crate) fn normalize_temperature(temperature: f64, temperature_type: Temperat
         TemperatureType::K => temperature,
     };
 }
+
+#[cfg(test)]
+mod temperature_tests;

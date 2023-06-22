@@ -1,3 +1,5 @@
+pub mod logic;
+
 use gtk4::{
     prelude::{ApplicationExt, ApplicationExtManual},
     traits::WidgetExt,
