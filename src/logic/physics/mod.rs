@@ -1,3 +1,4 @@
+pub mod calcs;
 pub mod parameters;
 pub mod temperature;
 

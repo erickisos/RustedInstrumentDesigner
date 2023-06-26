@@ -1,4 +1,5 @@
 pub mod logic;
+pub mod structs;
 
 use gtk4::{
     prelude::{ApplicationExt, ApplicationExtManual},
