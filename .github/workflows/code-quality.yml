@@ -1,0 +1,30 @@
+---
+on: push
+name: Code Quality Checks
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Update repositories
+        run: sudo apt-get update
+      - name: Install GTK
+        run: sudo apt-get -y install libgtk-4-dev build-essential
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Check formatting
+        run: cargo fmt -- --check
+      - name: Execute testing
+        run: cargo test
