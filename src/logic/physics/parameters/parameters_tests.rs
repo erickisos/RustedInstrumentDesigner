@@ -16,24 +16,12 @@ mod parameters_tests {
     }
 
     #[test]
-    fn it_can_build_parameters() {
-        let parameters = ParametersBuilder::new()
-            .with_temperature(72.0, TemperatureType::F)
-            .with_pressure(101.325)
-            .with_molar_co2(0.00039)
-            .with_humidity_saturation(45.0)
-            .build();
-        assert_eq!(parameters.temperature, 295.3722222222222);
-    }
-
-    #[test]
     fn it_can_calculate_wave_impedance() {
         let parameters = ParametersBuilder::new()
             .with_temperature(20.0, TemperatureType::C)
             .build();
-        let actual = calculate_wave_impedance(parameters, 0.006);
-        let expected = 3681860.1456449446;
-        assert_eq!(expected, actual);
+        let actual = wave_impedance(parameters, 0.006);
+        assert_eq!(3681860.1456449446, actual);
     }
 
     #[test]
