@@ -3,7 +3,8 @@
 mod parameters_tests {
     use super::super::*;
     use crate::{
-        logic::physics::temperature::TemperatureType, structs::parameters::ParametersBuilder,
+        logic::physics::temperature::TemperatureType,
+        structs::{parameters::ParametersBuilder, Builder},
     };
     use pretty_assertions::assert_eq;
 
