@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod temperature_tests {
     use super::super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn it_can_normalize_any_unit() {

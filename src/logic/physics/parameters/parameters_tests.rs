@@ -1,11 +1,12 @@
 #[cfg(test)]
 
 mod parameters_tests {
-    use crate::{
-        logic::physics::temperature::TemperatureType, structs::parameters::ParametersBuilder,
-    };
-
     use super::super::*;
+    use crate::{
+        logic::physics::temperature::TemperatureType,
+        structs::{parameters::ParametersBuilder, Builder},
+    };
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn it_can_build_from_temperature() {

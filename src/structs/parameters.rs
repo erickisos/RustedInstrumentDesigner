@@ -8,6 +8,8 @@ use crate::logic::physics::{
     temperature::{normalize_temperature, TemperatureType},
 };
 
+use super::Builder;
+
 pub struct PhysicalParameters {
     // Basic properties
     pub temperature: f64,         // Temperature in Kelvin degrees
@@ -37,20 +39,6 @@ pub struct ParametersBuilder {
 }
 
 impl ParametersBuilder {
-    pub fn new() -> Self {
-        let temperature = normalize_temperature(72.0, TemperatureType::F);
-        let humidity_saturation = 45.0;
-        let molar_co2 = 0.00039;
-        let pressure = 101.325;
-        return Self {
-            temperature: Some(temperature),
-            pressure: Some(pressure),
-            humidity_saturation: Some(humidity_saturation),
-            molar_co2: Some(molar_co2),
-            ..Default::default()
-        };
-    }
-
     pub fn with_pressure(mut self, pressure: f64) -> Self {
         self.pressure = Some(pressure);
         return self;
@@ -70,8 +58,24 @@ impl ParametersBuilder {
         self.temperature = Some(normalize_temperature(temperature, temperature_type));
         return self;
     }
+}
 
-    pub fn build(self) -> PhysicalParameters {
+impl Builder<PhysicalParameters> for ParametersBuilder {
+    fn new() -> Self {
+        let temperature = normalize_temperature(72.0, TemperatureType::F);
+        let humidity_saturation = 45.0;
+        let molar_co2 = 0.00039;
+        let pressure = 101.325;
+        return Self {
+            temperature: Some(temperature),
+            pressure: Some(pressure),
+            humidity_saturation: Some(humidity_saturation),
+            molar_co2: Some(molar_co2),
+            ..Default::default()
+        };
+    }
+
+    fn build(self) -> PhysicalParameters {
         let temperature = self.temperature.unwrap();
         let pressure = self.pressure.unwrap();
         let humidity_saturation = self.humidity_saturation.unwrap();
