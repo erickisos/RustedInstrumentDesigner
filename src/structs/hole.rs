@@ -1,20 +1,22 @@
 use super::{parameters::PhysicalParameters, Builder};
 
+static DEFAULT_HOLE_SIZE_MULT: f64 = 1.0;
+
 #[derive(Debug)]
 pub struct Hole {
     name: String,
+    height: f64,
     position: f64,
     diameter: f64,
-    height: f64,
     inner_curvature_radius: f64,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone)]
 pub struct HoleBuilder {
     name: Option<String>,
+    height: Option<f64>,
     position: Option<f64>,
     diameter: Option<f64>,
-    height: Option<f64>,
     inner_curvature_radius: Option<f64>,
 }
 
@@ -56,7 +58,7 @@ impl HoleBuilder {
 
 impl Builder<Hole> for HoleBuilder {
     fn new() -> Self {
-        let hole_size_mult = DEFAULT_HOLE_SIZE_MULT;
+        let _hole_size_mult = DEFAULT_HOLE_SIZE_MULT;
         todo!()
     }
 
